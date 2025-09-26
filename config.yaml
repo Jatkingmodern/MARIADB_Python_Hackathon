@@ -1,0 +1,60 @@
+# Basic configuration for the RAG gateway.
+server:
+  host: "0.0.0.0"
+  port: 8000
+  debug: true
+
+database:
+  # Example DSN: mysql+aiomysql://user:password@host:3306/database
+  # We will construct DSN in code from individual params if present.
+  host: "127.0.0.1"
+  port: 3306
+  user: "rag_reader"
+  password: "CHANGE_ME"
+  database: "eventmaster"
+  min_pool_size: 1
+  max_pool_size: 10
+  connect_timeout_seconds: 5
+  ssl: false
+
+gateway:
+  max_rows: 200                # maximum rows returned from DB to format
+  default_limit: 50
+  allowed_keywords:
+    - SELECT
+    - FROM
+    - WHERE
+    - GROUP BY
+    - ORDER BY
+    - LIMIT
+    - ASC
+    - DESC
+
+security:
+  api_key_header_name: "x-api-key" # header used to provide API key
+  # You should override this in environment or secret manager in production
+  internal_api_key: "REPLACE_WITH_STRONG_KEY"
+
+nl2sql:
+  # Map friendly alias → actual table name
+  table_aliases:
+    sales: "sales"
+    orders: "orders"
+    customers: "customers"
+  # simple column mapping per table (allow-list)
+  allowed_columns:
+    sales:
+      - region
+      - units_sold
+      - sale_date
+      - product_id
+    orders:
+      - order_id
+      - customer_id
+      - order_date
+      - total_amount
+    customers:
+      - customer_id
+      - customer_name
+      - country
+      - active
